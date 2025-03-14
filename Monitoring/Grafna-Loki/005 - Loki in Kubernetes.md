@@ -1,3 +1,5 @@
+# Loki in Kubernetes
+
 ![Grafana-Loki-Promtail-Setup-on-k8s](./.img/Loki-on-Kubernetes.excalidraw.png)
 
 ## Installing Helm
@@ -123,30 +125,29 @@ Now, let's generate some logs using a dummy server, so for that we will be creat
 
 ```yaml
 ---
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-	name: api
+  name: api
 
 spec:
-	selector:
-		matchLabels:
-			app: api
+  selector:
+    matchLabels:
+      app: api
 
-	template:
-		metadata:
-			labels:
-				app: api
+  template:
+    metadata:
+      labels:
+        app: api
 
-	spec:
-		containers:
-		- name: api
-		image: kodekloud/loki-demo
-		resources:
-			limits:
-				memory: 128Mi
-				cpu: 500m
+    spec:
+      containers:
+        - name: api
+          image: kodekloud/loki-demo
+          resources:
+            limits:
+              memory: 128Mi
+              cpu: 500m
 ```
 
 This deployment will just create logs, the setup is preconfigured to push logs in `loki`, which will be visualized in Grafana.

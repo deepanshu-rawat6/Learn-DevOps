@@ -31,10 +31,13 @@ server:
   log_level: info
   log_format: logfmt
   http_listen_port: 3101
+
 clients:
   - url: "http://loki:3100/loki/api/v1/push"
+
 positions:
   filename: /run/promtail/positions.yaml
+
 scrape_configs:
   - job_name: kubernetes-pods
     pipeline_stages:
@@ -106,7 +109,9 @@ scrape_configs:
           - __meta_kubernetes_pod_annotation_kubernetes_io_config_hash
           - __meta_kubernetes_pod_container_name
         target_label: __path__
+
 limits_config: null
+
 tracing:
   enabled: false
 ```
