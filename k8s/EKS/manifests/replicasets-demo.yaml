@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: helloworld-rs
+  labels:
+    app: helloworld-rs
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: helloworld-rs
+  template:
+    metadata:
+      labels:
+        app: helloworld-rs
+    spec:
+      containers:
+        - name: helloworld-rs
+          image: nginx

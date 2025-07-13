@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-management-microservice-deployment
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-management-microservice
+  template:
+    metadata:
+      labels:
+        app: user-management-microservice
+    spec:
+      initContainers:
+      - name: init-db
+        image: busybox
+        command: ['sh', '-c', 'until nslookup mysql-service.default.svc.cluster.local; do echo waiting for mysql-service; sleep 2; done']
+      containers:
+      - name: user-management-microservice
+        image: user-management-microservice:latest
+        ports:
+        - containerPort: 8080
+        env:
+          - name: DB_HOSTNAME
+            value: mysql-service
+          - name: DB_PORT
+            value: "3306"
+          - name: DB_USERNAME
+            value: root
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: db-secrets
+                key: db_password

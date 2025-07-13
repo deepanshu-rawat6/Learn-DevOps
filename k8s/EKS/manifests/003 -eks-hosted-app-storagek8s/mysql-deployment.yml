@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-deployment
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+      - name: mysql
+        image: mysql:8.0
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-secrets
+              key: db_password
+        ports:
+        - containerPort: 3306
+          name: mysql
+        volumeMounts:
+        - name: mysql-persistent-storage
+          mountPath: /var/lib/mysql
+        - name: user-management-dbcreation-script
+          mountPath: /docker-entrypoint-initdb.d
+      volumes:
+      - name: mysql-persistent-storage
+        persistentVolumeClaim:
+          claimName: mysql-pvc
+      - name: user-management-dbcreation-script
+        configMap:
+          name: user-management-dbcreation-script
+
+# Databases like MySQL often can’t handle multiple Pods writing to the same persistent volume simultaneously.
+#aving two MySQL Pods running concurrently (which can happen with RollingUpdate) can lead to data corruption, especially if they share a PersistentVolumeClaim.
+#
+# Note
+# For production MySQL, consider using a StatefulSet instead of a Deployment. StatefulSets are designed specifically for stateful applications and offer: Stable network identity, Persistent storage per Pod and Ordered, graceful deployment and scaling.

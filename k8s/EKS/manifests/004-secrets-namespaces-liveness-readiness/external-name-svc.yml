@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: rds-external-name-service
+spec:
+  externalName: <external_name>
+  type: ExternalName

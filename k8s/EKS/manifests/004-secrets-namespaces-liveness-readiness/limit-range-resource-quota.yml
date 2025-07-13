@@ -1,0 +1,44 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dev1
+
+---
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: default-cpu-mem-limit-range
+  namespace: dev1
+spec:
+  limits:
+    # default == "limit"
+    - default:
+        cpu: 500m
+        memory: 256Mi
+    # defaultRequest == "request"
+      defaultRequest:
+        cpu: 250m
+        memory: 128Mi
+      type: Container
+
+
+# Add the namespace in every manifest, except storage class as its independent
+
+---
+
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: ns-resource-quota
+  namespace: dev1
+spec:
+  hard:
+    requests.cpu: "1"
+    requests.memory: "1Gi"
+    limits.cpu: "2"
+    limits.memory: "2Gi"
+    pods: "10"
+    configmaps: "10"
+    persistentvolumeclaims: "5"
+    secrets: "10"
+    services: "10"
